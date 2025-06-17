@@ -1,0 +1,119 @@
+<!-- Pop-up knop -->
+<button onclick="document.getElementById('chatbotPopup').style.display='block'" style="padding: 10px; background-color: #007BFF; color: white; border: none; cursor: pointer;">
+  💬 Open Chatbot
+</button>
+
+<!-- Pop-up container -->
+<div id="chatbotPopup" style="display:none; position:fixed; bottom:20px; right:20px; width:320px; max-height:90vh; overflow-y:auto; background:#fff; border:2px solid #ccc; box-shadow:0 4px 8px rgba(0,0,0,0.2); z-index:9999;">
+  
+  <!-- Titel & sluiten knop -->
+  <div style="padding:10px; background:#007BFF; color:white; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
+    <span>Chatbot - Cheesy Studios</span>
+    <span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer; font-size:1.2em;">&times;</span>
+  </div>
+
+  <!-- Vraag knoppen -->
+  <div style="padding:10px;">
+    <h3 style="margin-top:0;">Veelgestelde vragen:</h3>
+
+    <button onclick="toonAntwoord('website')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">Website</button>
+    <button onclick="toonAntwoord('werken')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">Werken</button>
+    <button onclick="toonAntwoord('contact')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">Contact</button>
+    <button onclick="toonAntwoord('app')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">App</button>
+    <button onclick="toonAntwoord('telegram')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">Telegram</button>
+    <button onclick="toonAntwoord('nieuwsbrief')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">Nieuwsbrief</button>
+    <button onclick="toonAntwoord('projecten')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">Projecten</button>
+    <button onclick="toonAntwoord('vacatures')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">Vacatures</button>
+    <button onclick="toonAntwoord('support')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">Support</button>
+    <button onclick="toonAntwoord('algemenevoorwaarden')" style="width:100%; text-align:left; padding:8px; margin-bottom:5px; border:none; background:#f0f0f0; cursor:pointer;">Algemene Voorwaarden</button>
+
+    <hr style="margin:15px 0;">
+    
+    <input type="text" id="customQuestion" placeholder="Stel je vraag..." style="width:100%; padding:8px; margin-bottom:5px;">
+    <button onclick="zoekAntwoord()" style="width:100%; padding:8px; background:#28a745; color:white; border:none; cursor:pointer;">Zoek Antwoord</button>
+  </div>
+
+  <!-- Antwoordveld -->
+  <div id="antwoord" style="padding:10px; margin:10px; background:#f9f9f9; border-left:4px solid #007BFF;"></div>
+
+</div>
+
+<!-- JavaScript logica -->
+<script>
+  const antwoorden = {
+    website: "Ja, onze website is mooi! Wij bouwen ook professionele websites voor anderen.",
+    werken: "Je kunt vrijwilligerswerk doen bij ons. Bekijk de vacatures!",
+    contact: "Neem contact op via e-mail, live chat of ons forum. [Klik hier](https://www.cheesy-studios.ct.ws/neem-contact-met-ons-op-faq)  voor meer info.",
+    app: "Download de Cheesy Studios app voor Android via APK.",
+    telegram: "Sluit je aan bij onze Telegram-groep voor exclusieve updates.",
+    nieuwsbrief: "Abonneer je op onze nieuwsbrief via de link op de website.",
+    projecten: "Bekijk al onze projecten, apps en video’s via de links onderaan de pagina.",
+    vacatures: "Je kunt vrijwilligerswerk doen bij ons. Bekijk de vacatures!",
+    support: "Heb je hulp nodig? Neem contact op via de [FAQ-pagina](https://www.cheesy-studios.ct.ws/neem-contact-met-ons-op-faq).", 
+    algemenevoorwaarden: "Lees onze algemene voorwaarden en privacyverklaring via de link onderaan de pagina."
+  };
+
+  function toonAntwoord(vraag) {
+    const div = document.getElementById('antwoord');
+    div.innerHTML = antwoorden[vraag] || "Geen antwoord gevonden.";
+  }
+
+  function zoekAntwoord() {
+    const input = document.getElementById('customQuestion').value.toLowerCase();
+    const div = document.getElementById('antwoord');
+
+    // Fuzzy matching (simpele versie)
+    let bestMatch = null;
+    let highestScore = 0;
+
+    for (const key in antwoorden) {
+      let score = similarity(input, key.toLowerCase());
+      if (score > highestScore) {
+        highestScore = score;
+        bestMatch = key;
+      }
+    }
+
+    if (highestScore > 0.4) {
+      div.innerHTML = `<strong>Gevonden:</strong> ${antwoorden[bestMatch]}<br><small>Overeenkomst: ${(highestScore * 100).toFixed(0)}%</small>`;
+    } else {
+      div.innerHTML = "Helaas geen passend antwoord gevonden. Probeer het opnieuw of neem contact op via de <a href='https://www.cheesy-studios.ct.ws/neem-contact-met-ons-op-faq'  target='_blank'>FAQ-pagina</a>.";
+    }
+  }
+
+  // Simpele fuzzy match functie (Jaro-Winkler)
+  function similarity(s1, s2) {
+    let longer = s1;
+    let shorter = s2;
+    if (s1.length < s2.length) {
+      longer = s2;
+      shorter = s1;
+    }
+    const longerLength = longer.length;
+    if (longerLength === 0) return 1.0;
+    return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+  }
+
+  function editDistance(s1, s2) {
+    s1 = s1.toLowerCase();
+    s2 = s2.toLowerCase();
+
+    const costs = new Array();
+    for (let i = 0; i <= s1.length; i++) {
+      let lastValue = i;
+      costs[i] = new Array();
+      costs[i][0] = i;
+      for (let j = 1; j <= s2.length; j++) {
+        if (i === 0) costs[0][j] = j;
+        else {
+          let newValue = costs[i - 1][j - 1];
+          if (s1.charAt(i - 1) !== s2.charAt(j - 1))
+            newValue = Math.min(Math.min(newValue + 1, costs[i - 1][j] + 1), costs[i][j - 1] + 1);
+          costs[i][j] = lastValue;
+          lastValue = newValue;
+        }
+      }
+    }
+    return costs[s1.length][s2.length];
+  }
+</script>
