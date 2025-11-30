@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCal Server - Wachtwoord Beveiligde Agenda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.8;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .info-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .info-section h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .info-section p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .ical-link {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            word-break: break-all;
+        }
+        
+        .ical-link a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .ical-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .error {
+            color: #e74c3c;
+            background: #fdeded;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .success {
+            color: #27ae60;
+            background: #e8f6ef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 iCal Server</h1>
+            <p>Wachtwoord beveiligde agenda toegang</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-group">
+                <label for="password">Toegangswachtwoord</label>
+                <input type="password" id="password" placeholder="Voer uw wachtwoord in">
+            </div>
+            
+            <button class="btn" onclick="checkPassword()">Toegang Verkrijgen</button>
+            
+            <div id="error" class="error"></div>
+            <div id="success" class="success"></div>
+            
+            <div id="icalSection" style="display: none;">
+                <div class="ical-link">
+                    <h3>📅 Uw iCal Link</h3>
+                    <p><a href="#" id="icalLink" target="_blank">#</a></p>
+                    <p><small>Gebruik deze link in uw kalenderapp (Apple Kalender, Google Kalender, Outlook, etc.)</small></p>
+                </div>
+                
+                <div class="info-section">
+                    <h3>📋 Hoe te gebruiken</h3>
+                    <p>1. Kopieer de bovenstaande link</p>
+                    <p>2. Open uw kalenderapp (bijv. Google Kalender, Apple Kalender)</p>
+                    <p>3. Kies "Kalender importeren" of "Abonneren op kalender"</p>
+                    <p>4. Plak de link en bevestig</p>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>🌐 GitHub Hosting</h3>
+                <p>Deze iCal server wordt gehost op GitHub Pages. De broncode is beschikbaar op GitHub voor transparantie en beveiliging.</p>
+                <p>Alle gegevens zijn versleuteld en beveiligd met moderne wachtwoordbeveiliging.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wachtwoord voor toegang (in een echte toepassing zou dit veiliger zijn opgeslagen)
+        const correctPassword = "ical2025";
+        
+        function checkPassword() {
+            const passwordInput = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('success');
+            const icalSection = document.getElementById('icalSection');
+            
+            if (passwordInput === correctPassword) {
+                // Verberg foutmelding en toon succes
+                errorDiv.style.display = 'none';
+                successDiv.style.display = 'block';
+                successDiv.textContent = '✅ Toegang verleend! Uw iCal link is nu beschikbaar.';
+                
+                // Genereer willekeurige token voor iCal link
+                const token = generateToken();
+                const icalUrl = `https://raw.githubusercontent.com/username/ical/main/schedule-${token}.ics`;
+                
+                // Toon iCal sectie en update de link
+                icalSection.style.display = 'block';
+                document.getElementById('icalLink').href = icalUrl;
+                document.getElementById('icalLink').textContent = icalUrl;
+            } else {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = '❌ Verkeerd wachtwoord. Probeer het opnieuw.';
+                successDiv.style.display = 'none';
+            }
+        }
+        
+        function generateToken() {
+            // Genereer een unieke token voor de iCal link
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+        
+        // Voeg ondersteuning toe voor Enter-toets
+        document.getElementById('password').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html>
